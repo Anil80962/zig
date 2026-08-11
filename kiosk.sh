@@ -81,5 +81,10 @@ FLAGS=(
 if [ "$IS_WAYLAND" = "1" ]; then
     FLAGS+=( --ozone-platform=wayland --enable-wayland-ime )
 fi
+# Kiosk tweaks: thin scrollbars + scrollable side menu.
+TWEAKS="$HOME/aquagen-kiosk/kiosk-tweaks"
+if [ -d "$TWEAKS" ]; then
+    FLAGS+=( --load-extension="$TWEAKS" --disable-extensions-except="$TWEAKS" )
+fi
 
 exec "$CHROME" "${FLAGS[@]}" "$URL"

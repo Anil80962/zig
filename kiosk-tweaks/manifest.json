@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "AquaGen Kiosk Tweaks",
+  "version": "1.0",
+  "description": "Thin scrollbars and a scrollable side menu for the kiosk display.",
+  "content_scripts": [
+    {
+      "matches": ["*://web.aquagen.co.in/*"],
+      "js": ["tweak.js"],
+      "run_at": "document_start",
+      "all_frames": true
+    }
+  ]
+}
