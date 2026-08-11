@@ -65,7 +65,8 @@ fi
 # page on field focus.
 FLAGS=(
     --kiosk
-    --incognito
+    --user-data-dir="$HOME/.config/aquagen-chrome"
+    --no-first-run
     --noerrdialogs
     --disable-infobars
     --disable-session-crashed-bubble
