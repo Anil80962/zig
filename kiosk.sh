@@ -69,8 +69,9 @@ if [ -f "$PROFILE" ]; then
 fi
 
 # ---- Chromium flags ----
-# On Wayland we run Chromium as a NATIVE Wayland client with IME enabled, which
-# is what makes squeekboard pop up automatically when you tap a login field.
+# Runs under Xwayland (default) — this keeps touch-drag scrolling working.
+# Touch keyboard is provided by wvkbd, which injects into the focused window at
+# the compositor level and works regardless of Chromium's Wayland/IME support.
 FLAGS=(
     --kiosk
     --incognito
@@ -80,13 +81,10 @@ FLAGS=(
     --disable-features=Translate,TranslateUI
     --check-for-update-interval=31536000
     --overscroll-history-navigation=0
-    --disable-pinch
     --autoplay-policy=no-user-gesture-required
     --touch-events=enabled
+    --enable-features=OverlayScrollbar
     --start-fullscreen
 )
-if [ "$IS_WAYLAND" = "1" ]; then
-    FLAGS+=( --ozone-platform=wayland --enable-wayland-ime --enable-features=OverlayScrollbar )
-fi
 
 exec "$CHROME" "${FLAGS[@]}" "$URL"
