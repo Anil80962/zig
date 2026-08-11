@@ -53,6 +53,14 @@ if command -v squeekboard >/dev/null 2>&1; then
     pgrep -x squeekboard >/dev/null || squeekboard >/dev/null 2>&1 &
 fi
 
+# ---- WiFi manager ----
+# Local page (127.0.0.1:8088) opened by the WiFi icon on the dashboard, so the
+# WiFi can be changed from the kiosk without a desktop.
+if command -v python3 >/dev/null 2>&1; then
+    pgrep -f 'wifi-manager[.]py' >/dev/null || \
+        python3 "$HOME/aquagen-kiosk/wifi-manager.py" >/tmp/wifi-manager.log 2>&1 &
+fi
+
 # ---- clean up any stale "Chrome didn't shut down correctly" flag ----
 PROFILE="$HOME/.config/chromium/Default/Preferences"
 if [ -f "$PROFILE" ]; then
