@@ -78,12 +78,11 @@ FLAGS=(
     --noerrdialogs
     --disable-infobars
     --disable-session-crashed-bubble
-    --disable-features=Translate,TranslateUI
+    --disable-features=Translate,TranslateUI,OverlayScrollbar
     --check-for-update-interval=31536000
     --overscroll-history-navigation=0
     --autoplay-policy=no-user-gesture-required
     --touch-events=enabled
-    --enable-features=OverlayScrollbar
     --start-fullscreen
 )
 
