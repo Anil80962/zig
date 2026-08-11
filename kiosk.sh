@@ -83,5 +83,10 @@ FLAGS=(
     --touch-events=enabled
     --start-fullscreen
 )
+# Run as a native Wayland client so the wvkbd on-screen keyboard can inject
+# keystrokes into it (keys don't cross the Xwayland boundary otherwise).
+if [ "$IS_WAYLAND" = "1" ]; then
+    FLAGS+=( --ozone-platform=wayland --enable-wayland-ime )
+fi
 
 exec "$CHROME" "${FLAGS[@]}" "$URL"
