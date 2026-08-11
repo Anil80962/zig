@@ -48,15 +48,20 @@
     b.id = "kiosk-wifi-btn";
     b.title = "Change WiFi";
     b.innerHTML =
-      '<svg viewBox="0 0 24 24" width="22" height="22" fill="#fff">' +
-      '<path d="M12 21l3-3a4.24 4.24 0 0 0-6 0l3 3zm-6-6l1.8 1.8a8.49 8.49 0 0 1 8.4 0L18 15a11 11 0 0 0-12 0zm-3-3l1.8 1.8a13 13 0 0 1 16.4 0L23 12a15.5 15.5 0 0 0-20 0z"/></svg>';
+      '<svg viewBox="0 0 24 24" width="26" height="26" fill="#fff" ' +
+      'style="display:block;margin:auto"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0' +
+      'l2-2C16.93 2.93 7.07 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2' +
+      'c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg>';
     b.style.cssText = [
-      "position:fixed", "top:6px", "left:6px", "z-index:2147483647",
-      "width:40px", "height:40px", "border-radius:50%", "border:none",
-      "background:rgba(37,99,235,.92)", "box-shadow:0 2px 6px rgba(0,0,0,.4)",
+      "position:fixed", "top:8px", "left:8px", "z-index:2147483647",
+      "width:46px", "height:46px", "border-radius:50%", "border:none",
+      "background:linear-gradient(135deg,#2563eb,#1d4ed8)",
+      "box-shadow:0 3px 10px rgba(0,0,0,.45)",
       "display:flex", "align-items:center", "justify-content:center",
-      "cursor:pointer", "padding:0"
+      "cursor:pointer", "padding:0", "transition:transform .1s"
     ].join(";");
+    b.addEventListener("touchstart", function () { b.style.transform = "scale(0.92)"; });
+    b.addEventListener("touchend", function () { b.style.transform = "scale(1)"; });
     b.addEventListener("click", function () {
       location.href = "http://127.0.0.1:8088/";
     });

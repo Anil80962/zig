@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=AquaGen Kiosk
+Comment=Launch the AquaGen dashboard kiosk
+Exec=bash -c "rm -f $HOME/.config/aquagen-chrome/Singleton*; bash $HOME/aquagen-kiosk/kiosk.sh"
+Icon=web-browser
+Terminal=false
+Categories=Network;
