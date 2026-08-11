@@ -74,6 +74,7 @@ FLAGS=(
     --overscroll-history-navigation=0
     --autoplay-policy=no-user-gesture-required
     --touch-events=enabled
+    --force-device-scale-factor=0.8
     --start-fullscreen
 )
 if [ "$IS_WAYLAND" = "1" ]; then
