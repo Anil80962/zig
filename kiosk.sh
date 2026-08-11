@@ -47,12 +47,14 @@ if command -v unclutter >/dev/null 2>&1; then
 fi
 
 # ---- on-screen keyboard ----
-# wvkbd injects keystrokes into the focused window at the compositor level, so
-# it types into the Chromium login form even though Chromium runs on Xwayland.
-# It sits as a bar at the bottom of the screen. -L is its height in px.
+# wvkbd is a layer-shell keyboard that reserves space at the bottom of the
+# screen (an "exclusive zone"), so a MAXIMIZED browser window is sized to sit
+# above it instead of being covered. It injects keystrokes into the focused
+# window at the compositor level.
 if command -v wvkbd-mobintl >/dev/null 2>&1; then
     pgrep -x wvkbd-mobintl >/dev/null || \
         wvkbd-mobintl -L 200 --fn "Sans 18" >/dev/null 2>&1 &
+    sleep 1   # let it map + claim its exclusive zone before the browser maximizes
 elif command -v squeekboard >/dev/null 2>&1; then
     pgrep -x squeekboard >/dev/null || squeekboard >/dev/null 2>&1 &
 elif command -v onboard >/dev/null 2>&1; then
@@ -67,12 +69,14 @@ if [ -f "$PROFILE" ]; then
 fi
 
 # ---- Chromium flags ----
-# Runs under Xwayland (default) — this keeps touch-drag scrolling working.
-# Touch keyboard is provided by wvkbd, which injects into the focused window at
-# the compositor level and works regardless of Chromium's Wayland/IME support.
+# NOT --kiosk (fullscreen would cover the keyboard). Instead --app (no tabs/URL
+# bar) + --start-maximized, so labwc sizes the window to the area above the
+# keyboard's reserved zone. Native Wayland (--ozone-platform=wayland) is what
+# lets wvkbd's keystrokes reach the browser.
 FLAGS=(
-    --kiosk
+    "--app=$URL"
     --incognito
+    --start-maximized
     --noerrdialogs
     --disable-infobars
     --disable-session-crashed-bubble
@@ -81,12 +85,9 @@ FLAGS=(
     --overscroll-history-navigation=0
     --autoplay-policy=no-user-gesture-required
     --touch-events=enabled
-    --start-fullscreen
 )
-# Run as a native Wayland client so the wvkbd on-screen keyboard can inject
-# keystrokes into it (keys don't cross the Xwayland boundary otherwise).
 if [ "$IS_WAYLAND" = "1" ]; then
     FLAGS+=( --ozone-platform=wayland --enable-wayland-ime )
 fi
 
-exec "$CHROME" "${FLAGS[@]}" "$URL"
+exec "$CHROME" "${FLAGS[@]}"
