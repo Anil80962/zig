@@ -47,18 +47,16 @@ if command -v unclutter >/dev/null 2>&1; then
 fi
 
 # ---- on-screen keyboard ----
-# squeekboard (Wayland): stays hidden, auto-pops when a text field is tapped.
-# wvkbd (fallback): a Wayland keyboard bar. onboard (X11): auto-show OSK.
-if [ "$IS_WAYLAND" = "1" ]; then
-    if command -v squeekboard >/dev/null 2>&1; then
-        pgrep -x squeekboard >/dev/null || squeekboard >/dev/null 2>&1 &
-    elif command -v wvkbd-mobintl >/dev/null 2>&1; then
-        pgrep -x wvkbd-mobintl >/dev/null || wvkbd-mobintl -L 240 >/dev/null 2>&1 &
-    fi
-else
-    if command -v onboard >/dev/null 2>&1; then
-        pgrep -x onboard >/dev/null || onboard >/dev/null 2>&1 &
-    fi
+# wvkbd injects keystrokes into the focused window at the compositor level, so
+# it types into the Chromium login form even though Chromium runs on Xwayland.
+# It sits as a bar at the bottom of the screen. -L is its height in px.
+if command -v wvkbd-mobintl >/dev/null 2>&1; then
+    pgrep -x wvkbd-mobintl >/dev/null || \
+        wvkbd-mobintl -L 200 --fn "Sans 18" >/dev/null 2>&1 &
+elif command -v squeekboard >/dev/null 2>&1; then
+    pgrep -x squeekboard >/dev/null || squeekboard >/dev/null 2>&1 &
+elif command -v onboard >/dev/null 2>&1; then
+    pgrep -x onboard >/dev/null || onboard >/dev/null 2>&1 &
 fi
 
 # ---- clean up any stale "Chrome didn't shut down correctly" flag ----
