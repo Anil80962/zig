@@ -46,13 +46,15 @@ if command -v unclutter >/dev/null 2>&1; then
     unclutter -idle 0.5 -root >/dev/null 2>&1 &
 fi
 
-# ---- on-screen keyboard ----
-# squeekboard is the Pi's built-in OSK. The compositor draws it ABOVE the
-# fullscreen page, and it auto-appears when a text field is focused (Chromium
-# runs native-Wayland with IME enabled below), then hides again. No custom
-# helper needed.
-if command -v squeekboard >/dev/null 2>&1; then
-    pgrep -x squeekboard >/dev/null || squeekboard >/dev/null 2>&1 &
+# ---- on-screen keyboard (on demand) ----
+# A small local helper starts the wvkbd keyboard only while a text field is
+# focused (driven by the osk-ext browser extension) and hides it afterwards, so
+# the keyboard is off the screen the rest of the time. The page runs MAXIMIZED
+# (not fullscreen) so the keyboard can appear over its lower part.
+if command -v wvkbd-mobintl >/dev/null 2>&1 && command -v python3 >/dev/null 2>&1; then
+    pgrep -f 'osk-daemon[.]py' >/dev/null || \
+        python3 "$HOME/aquagen-kiosk/osk-daemon.py" >/tmp/osk-daemon.log 2>&1 &
+    OSK_EXT="$HOME/aquagen-kiosk/osk-ext"
 fi
 
 # ---- clean up any stale "Chrome didn't shut down correctly" flag ----
@@ -63,11 +65,14 @@ if [ -f "$PROFILE" ]; then
 fi
 
 # ---- Chromium flags ----
-# Fullscreen kiosk. Native Wayland + IME so the built-in squeekboard keyboard
-# auto-shows over the page when a text field is focused, then hides again.
+# --app (no tabs/URL bar) + --start-maximized so the window fills the screen but
+# is NOT true-fullscreen — that lets the wvkbd keyboard appear over its lower
+# part when needed. Native Wayland (so wvkbd can inject keystrokes), but NOT
+# --enable-wayland-ime, so the built-in squeekboard does not also pop up.
 FLAGS=(
-    --kiosk
-    --incognito
+    "--app=$URL"
+    --user-data-dir="$HOME/.config/aquagen-chrome"
+    --start-maximized
     --noerrdialogs
     --disable-infobars
     --disable-session-crashed-bubble
@@ -76,10 +81,12 @@ FLAGS=(
     --overscroll-history-navigation=0
     --autoplay-policy=no-user-gesture-required
     --touch-events=enabled
-    --start-fullscreen
 )
 if [ "$IS_WAYLAND" = "1" ]; then
-    FLAGS+=( --ozone-platform=wayland --enable-wayland-ime )
+    FLAGS+=( --ozone-platform=wayland )
+fi
+if [ -n "${OSK_EXT:-}" ] && [ -d "$OSK_EXT" ]; then
+    FLAGS+=( --load-extension="$OSK_EXT" --disable-extensions-except="$OSK_EXT" )
 fi
 
-exec "$CHROME" "${FLAGS[@]}" "$URL"
+exec "$CHROME" "${FLAGS[@]}"
