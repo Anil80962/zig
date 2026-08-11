@@ -3,11 +3,24 @@
 # The browser extension (osk-ext) calls http://127.0.0.1:8577/show when a text
 # field is focused and /hide when it loses focus. Showing = start wvkbd,
 # hiding = kill it, so the keyboard only occupies the screen when needed.
-import http.server, subprocess, os, threading
+import http.server, subprocess, os, threading, glob
 
 PORT = 8577
 WVKBD = ["wvkbd-mobintl", "-L", "200", "--fn", "Sans 18"]
 _lock = threading.Lock()
+
+
+def _wl_env():
+    """Ensure the environment points at the running Wayland session so wvkbd
+    (a Wayland client) can connect even if this helper was started without it."""
+    env = dict(os.environ)
+    xdg = env.get("XDG_RUNTIME_DIR") or ("/run/user/%d" % os.getuid())
+    env["XDG_RUNTIME_DIR"] = xdg
+    if not env.get("WAYLAND_DISPLAY"):
+        socks = sorted(glob.glob(os.path.join(xdg, "wayland-[0-9]*")))
+        socks = [s for s in socks if not s.endswith(".lock")]
+        env["WAYLAND_DISPLAY"] = os.path.basename(socks[0]) if socks else "wayland-0"
+    return env
 
 
 def _running():
@@ -18,7 +31,7 @@ def _running():
 def show():
     with _lock:
         if not _running():
-            subprocess.Popen(WVKBD, env=dict(os.environ),
+            subprocess.Popen(WVKBD, env=_wl_env(),
                              stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 
