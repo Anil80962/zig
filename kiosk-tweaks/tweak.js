@@ -48,13 +48,13 @@
     b.id = "kiosk-wifi-btn";
     b.title = "Change WiFi";
     b.innerHTML =
-      '<svg viewBox="0 0 24 24" width="26" height="26" fill="#fff" ' +
+      '<svg viewBox="0 0 24 24" width="23" height="23" fill="#fff" ' +
       'style="display:block;margin:auto"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0' +
       'l2-2C16.93 2.93 7.07 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2' +
       'c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg>';
     b.style.cssText = [
       "position:fixed", "top:8px", "left:8px", "z-index:2147483647",
-      "width:46px", "height:46px", "border-radius:50%", "border:none",
+      "width:41px", "height:41px", "border-radius:50%", "border:none",
       "background:linear-gradient(135deg,#2563eb,#1d4ed8)",
       "box-shadow:0 3px 10px rgba(0,0,0,.45)",
       "display:flex", "align-items:center", "justify-content:center",
